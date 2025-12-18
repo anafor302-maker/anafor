@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Rezervasyon Onayı - {{ site_ayarlari.site_adi }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container text-center">
+        <div class="mb-4">
+            <span style="font-size: 4rem;">✅</span>
+        </div>
+        <h1>Rezervasyon Talebiniz Alındı!</h1>
+        <p class="lead">Sayın {{ rezervasyon.ad_soyad }}, talebiniz başarıyla kaydedildi.</p>
+        
+        <div class="card mt-4 mx-auto" style="max-width: 600px;">
+            <div class="card-body text-start">
+                <h5 class="card-title">Rezervasyon Detayları</h5>
+                <p><strong>Araç:</strong> {{ rezervasyon.arac }}</p>
+                <p><strong>Tarih:</strong> {{ rezervasyon.baslangic_tarihi }} - {{ rezervasyon.bitis_tarihi }}</p>
+                <p><strong>İletişim:</strong> {{ rezervasyon.telefon }} / {{ rezervasyon.email }}</p>
+                <p class="text-muted">En kısa sürede size dönüş yapacağız.</p>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'anasayfa' %}" class="btn btn-primary">Ana Sayfaya Dön</a>
+        </div>
+    </div>
+</section>
+
+<!-- Google Ads Conversion Tracking -->
+{% if conversion_data %}
+<script>
+    gtag('event', 'conversion', {
+        'send_to': '{{ conversion_data.ads_id }}/{{ conversion_data.conversion_label }}',
+        'value': {{ conversion_data.value }},
+        'currency': '{{ conversion_data.currency }}',
+        'transaction_id': '{{ rezervasyon.id }}'
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Araç Kiralama - {{ site_ayarlari.site_adi }}{% endblock %}
+{% block meta_description %}
+Geniş araç filomuzdan ihtiyacınıza uygun aracı seçin. Ekonomik ve lüks araç seçenekleri.
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h1 class="mb-4">Tüm Araçlar</h1>
+
+        <!-- Filtreler -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <select name="kategori" class="form-select">
+                    <option value="">Tüm Kategoriler</option>
+                    {% for kat in kategoriler %}
+                        <option value="{{ kat.slug }}" {% if request.GET.kategori == kat.slug %}selected{% endif %}>
+                            {{ kat.ad }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select name="yakit" class="form-select">
+                    <option value="">Yakıt Tipi</option>
+                    <option value="benzin" {% if request.GET.yakit == "benzin" %}selected{% endif %}>Benzin</option>
+                    <option value="dizel" {% if request.GET.yakit == "dizel" %}selected{% endif %}>Dizel</option>
+                    <option value="elektrik" {% if request.GET.yakit == "elektrik" %}selected{% endif %}>Elektrik</option>
+                    <option value="hibrit" {% if request.GET.yakit == "hibrit" %}selected{% endif %}>Hibrit</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select name="vites" class="form-select">
+                    <option value="">Vites Tipi</option>
+                    <option value="manuel" {% if request.GET.vites == "manuel" %}selected{% endif %}>Manuel</option>
+                    <option value="otomatik" {% if request.GET.vites == "otomatik" %}selected{% endif %}>Otomatik</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Filtrele</button>
+            </div>
+        </form>
+
+        <!-- Araçlar -->
+        <div class="row g-4">
+            {% for arac in araclar %}
+<div class="col-md-6">
+    <div class="card car-card h-100">
+        <img src="{{ arac.ana_gorsel.url }}"
+             class="card-img-top"
+             alt="{{ arac.marka }} {{ arac.model }}"
+             style="height: 200px; object-fit: cover;">
+
+        <div class="card-body">
+            <h5 class="card-title">{{ arac.marka }} {{ arac.model }}</h5>
+
+            <p class="text-muted mb-2">
+                {{ arac.yil }} • {{ arac.yakit_tipi|title }} • {{ arac.vites_tipi|title }}
+            </p>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span class="price-badge">{{ arac.gunluk_fiyat }} ₺/gün</span>
+
+                <div class="d-flex gap-2">
+                    {% if site_ayarlari.business_phone %}
+                        <!-- ARA -->
+                        <a href="tel:{{ site_ayarlari.business_phone }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-telephone"></i> Ara
+                        </a>
+
+                        <!-- WHATSAPP -->
+                        <a href="https://wa.me/{{ site_ayarlari.business_phone|cut:'+'|cut:' ' }}"
+                           target="_blank"
+                           class="btn btn-success btn-sm">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            {% empty %}
+                <p class="text-center">Araç bulunamadı.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if araclar.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if araclar.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?sayfa={{ araclar.previous_page_number }}">Önceki</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">{{ araclar.number }}</span>
+                </li>
+
+                {% if araclar.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?sayfa={{ araclar.next_page_number }}">Sonraki</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

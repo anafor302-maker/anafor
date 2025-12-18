@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ arac.meta_title }}{% endblock %}
+{% block meta_description %}{{ arac.meta_description }}{% endblock %}
+
+{% block og_title %}{{ arac.marka }} {{ arac.model }} Kiralama{% endblock %}
+{% block og_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ arac.ana_gorsel.url }}">{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Görsel Galeri -->
+            <div class="col-md-6">
+                <img src="{{ arac.ana_gorsel.url }}" class="img-fluid rounded mb-3" alt="{{ arac }}">
+                <div class="row g-2">
+                    {% if arac.gorsel_2 %}
+                    <div class="col-6"><img src="{{ arac.gorsel_2.url }}" class="img-fluid rounded" alt="{{ arac }}"></div>
+                    {% endif %}
+                    {% if arac.gorsel_3 %}
+                    <div class="col-6"><img src="{{ arac.gorsel_3.url }}" class="img-fluid rounded" alt="{{ arac }}"></div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Bilgiler ve Rezervasyon -->
+            <div class="col-md-6">
+                <h1>{{ arac.marka }} {{ arac.model }}</h1>
+                <p class="lead text-muted">{{ arac.yil }} Model</p>
+                
+                <div class="bg-light p-3 rounded mb-4">
+                    <h3 class="text-primary">{{ arac.gunluk_fiyat }} ₺ <small class="text-muted">/gün</small></h3>
+                    {% if arac.haftalik_fiyat %}<p class="mb-0">Haftalık: {{ arac.haftalik_fiyat }} ₺</p>{% endif %}
+                    {% if arac.aylik_fiyat %}<p class="mb-0">Aylık: {{ arac.aylik_fiyat }} ₺</p>{% endif %}
+                </div>
+                
+                <h5>Araç Özellikleri</h5>
+                <ul class="list-unstyled">
+                    <li>⛽ Yakıt: {{ arac.yakit_tipi|title }}</li>
+                    <li>⚙️ Vites: {{ arac.vites_tipi|title }}</li>
+                    <li>👥 Koltuk: {{ arac.koltuk_sayisi }} Kişi</li>
+                    {% if arac.bagaj_hacmi %}<li>🧳 Bagaj: {{ arac.bagaj_hacmi }}L</li>{% endif %}
+                </ul>
+                
+                <!-- Rezervasyon Formu -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Hızlı Rezervasyon</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}
+                                <div class="text-danger">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary w-100">Rezervasyon Yap</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Benzer Araçlar -->
+        {% if benzer_araclar %}
+        <section class="mt-5">
+            <h3 class="mb-4">Benzer Araçlar</h3>
+            <div class="row g-4">
+                {% for benzer in benzer_araclar %}
+                <div class="col-md-3">
+                    <div class="card car-card h-100">
+                        <img src="{{ benzer.ana_gorsel.url }}" class="card-img-top" alt="{{ benzer }}" style="height: 150px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6>{{ benzer.marka }} {{ benzer.model }}</h6>
+                            <p class="text-muted small mb-2">{{ benzer.gunluk_fiyat }} ₺/gün</p>
+                            <a href="{{ benzer.get_absolute_url }}" class="btn btn-sm btn-outline-primary">Detay</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Structured Data: Product -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ arac.marka }} {{ arac.model }}",
+    "image": "{{ request.scheme }}://{{ request.get_host }}{{ arac.ana_gorsel.url }}",
+    "description": "{{ arac.meta_description }}",
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ arac.gunluk_fiyat }}",
+        "priceCurrency": "TRY",
+        "availability": "https://schema.org/InStock"
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ site_ayarlari.site_adi }} - Araç Kiralama{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Hayalinizdeki Aracı Kiralayın</h1>
+        <p class="lead mb-4">Geniş araç filomuz ve uygun fiyatlarımızla güvenli yolculuklar</p>
+        <a href="{% url 'arac_listesi' %}" class="btn btn-light btn-lg">Araçları İncele</a>
+    </div>
+</section>
+
+<!-- Öne Çıkan Araçlar -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Öne Çıkan Araçlar</h2>
+        <div class="row g-4">
+            {% for arac in onerilir_araclar %}
+            <div class="col-md-6">
+                <div class="card car-card h-100">
+                    <img src="{{ arac.ana_gorsel.url }}"
+                        class="card-img-top"
+                        alt="{{ arac.marka }} {{ arac.model }}"
+                        style="height: 200px; object-fit: cover;">
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ arac.marka }} {{ arac.model }}</h5>
+
+                        <p class="text-muted mb-2">
+                            {{ arac.yil }} • {{ arac.yakit_tipi|title }} • {{ arac.vites_tipi|title }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span class="price-badge">{{ arac.gunluk_fiyat }} ₺/gün</span>
+
+                            <div class="d-flex gap-2">
+                                {% if site_ayarlari.business_phone %}
+                                    <!-- ARA -->
+                                    <a href="tel:{{ site_ayarlari.business_phone }}"
+                                    class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-telephone"></i> Ara
+                                    </a>
+
+                                    <!-- WHATSAPP -->
+                                    <a href="https://wa.me/{{ site_ayarlari.business_phone|cut:'+'|cut:' ' }}"
+                                    target="_blank"
+                                    class="btn btn-success btn-sm">
+                                        <i class="bi bi-whatsapp"></i> WhatsApp
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% empty %}
+            <p class="text-center">Henüz araç bulunmamaktadır.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Kategoriler -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Kategorilerimiz</h2>
+        <div class="row g-4">
+            {% for kategori in kategoriler %}
+            <div class="col-md-3 text-center">
+                <a href="{{ kategori.get_absolute_url }}" class="text-decoration-none text-dark">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <div class="feature-icon mb-3">🚙</div>
+                        <h5>{{ kategori.ad }}</h5>
+                        
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Neden Biz? -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Neden Bizi Tercih Etmelisiniz?</h2>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <div class="feature-icon mb-3">✅</div>
+                <h5>Güvenilir</h5>
+                <p class="text-muted">Sigortalı ve bakımlı araçlar</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="feature-icon mb-3">💰</div>
+                <h5>Uygun Fiyat</h5>
+                <p class="text-muted">Rekabetçi fiyat garantisi</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="feature-icon mb-3">🏆</div>
+                <h5>Kaliteli Hizmet</h5>
+                <p class="text-muted">7/24 müşteri desteği</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="feature-icon mb-3">🚗</div>
+                <h5>Geniş Filo</h5>
+                <p class="text-muted">100+ araç seçeneği</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Structured Data: Featured Cars -->
+{% if onerilir_araclar %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+        {% for arac in onerilir_araclar %}
+        {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "item": {
+                "@type": "Product",
+                "name": "{{ arac.marka }} {{ arac.model }}",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "{{ arac.gunluk_fiyat }}",
+                    "priceCurrency": "TRY"
+                }
+            }
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <title>{% block title %}{{ site_ayarlari.site_adi }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site_ayarlari.meta_description }}{% endblock %}">
+    {% if site_ayarlari.meta_keywords %}
+        <meta name="keywords" content="{{ site_ayarlari.meta_keywords }}">
+    {% endif %}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{{ site_ayarlari.site_adi }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ site_ayarlari.meta_description }}{% endblock %}">
+    {% block og_image %}{% endblock %}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ site_ayarlari.site_adi }}{% endblock %}">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.ico">
+
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #ff6600;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+        .hero { background: linear-gradient(135deg, var(--primary-color), #004999); color: #fff; padding: 80px 0; }
+        .car-card { transition: .3s; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
+        .price-badge { background: var(--secondary-color); color: #fff; padding: 8px 16px; border-radius: 20px; }
+        footer { background: #2c3e50; color: #fff; padding: 40px 0 20px; }
+
+        /* Sosyal medya */
+        .social-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: .3s;
+        }
+        .social-icon:hover { transform: translateY(-4px); }
+        .facebook:hover { background:#1877f2; }
+        .instagram:hover {
+            background: radial-gradient(circle at 30% 30%, #feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+        }
+        .twitter:hover { background:#000; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'anasayfa' %}">🚗 {{ site_ayarlari.site_adi }}</a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'anasayfa' %}">Ana Sayfa</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'arac_listesi' %}">Araçlar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#iletisim">İletişim</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+<footer id="iletisim">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5>{{ site_ayarlari.site_adi }}</h5>
+                <p>Güvenli ve konforlu araç kiralama hizmeti</p>
+                {% if site_ayarlari.business_phone %}<p>📞 {{ site_ayarlari.business_phone }}</p>{% endif %}
+                {% if site_ayarlari.business_email %}<p>✉️ {{ site_ayarlari.business_email }}</p>{% endif %}
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5>Hızlı Bağlantılar</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'anasayfa' %}" class="text-white-50">Ana Sayfa</a></li>
+                    <li><a href="{% url 'arac_listesi' %}" class="text-white-50">Araçlar</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5>Sosyal Medya</h5>
+                <div class="d-flex gap-3">
+                    {% if site_ayarlari.facebook_url %}
+                        <a href="{{ site_ayarlari.facebook_url }}" class="social-icon facebook"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if site_ayarlari.instagram_url %}
+                        <a href="{{ site_ayarlari.instagram_url }}" class="social-icon instagram"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if site_ayarlari.twitter_url %}
+                        <a href="{{ site_ayarlari.twitter_url }}" class="social-icon twitter"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <hr class="bg-white">
+        <p class="text-center">&copy; 2024 {{ site_ayarlari.site_adi }}. Tüm hakları saklıdır.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

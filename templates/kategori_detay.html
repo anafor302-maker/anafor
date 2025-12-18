@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ kategori.ad }} - {{ site_ayarlari.site_adi }}{% endblock %}
+{% block meta_description %}
+{{ kategori.aciklama|default:kategori.ad }}
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+
+        <h1 class="mb-2">{{ kategori.ad }}</h1>
+        {% if kategori.aciklama %}
+            <p class="lead text-muted">{{ kategori.aciklama }}</p>
+        {% endif %}
+
+        <!-- Araçlar -->
+        <div class="row g-4 mt-4">
+            {% for arac in araclar %}
+                <div class="col-md-6">
+                    <div class="card car-card h-100">
+                        <img src="{{ arac.ana_gorsel.url }}"
+                             class="card-img-top"
+                             alt="{{ arac.marka }} {{ arac.model }}"
+                             style="height: 200px; object-fit: cover;">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ arac.marka }} {{ arac.model }}</h5>
+
+                            <p class="text-muted mb-2">
+                                {{ arac.yil }} • {{ arac.yakit_tipi|title }} • {{ arac.vites_tipi|title }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price-badge">
+                                    {{ arac.gunluk_fiyat }} ₺/gün
+                                </span>
+                                <a href="{{ arac.get_absolute_url }}" class="btn btn-primary btn-sm">
+                                    Detay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center mt-4">
+                    Bu kategoride araç bulunmamaktadır.
+                </p>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if araclar.has_other_pages %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if araclar.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?sayfa={{ araclar.previous_page_number }}">
+                            Önceki
+                        </a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">{{ araclar.number }}</span>
+                </li>
+
+                {% if araclar.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?sayfa={{ araclar.next_page_number }}">
+                            Sonraki
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}
